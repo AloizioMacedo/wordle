@@ -22,6 +22,13 @@ class bcolors:
     BRIGHT_BLACK = '\u001b[30;1m'
 
 
+class GuessingObserver(ABC):
+
+    @abstractmethod
+    def update(self, guessing_process: GuessingProcess) -> None:
+        pass
+
+
 class GuessingProcess:
 
     def __init__(self) -> None:
