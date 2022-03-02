@@ -24,3 +24,13 @@ class GameStatus(GuessingObserver):
             print("I'm sorry! You lost. : (\n")
 
 
+def main():
+    guessing_process = GuessingProcess()
+    game_status = GameStatus(guessing_process)
+    while game_status.game_is_running:
+        guessing_process.guess_step()
+    game_status.trigger_end_game()
+
+
+if __name__ == "__main__":
+    main()
