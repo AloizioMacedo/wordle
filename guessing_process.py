@@ -41,7 +41,7 @@ class GuessingProcess:
     def attach(self, observer: GuessingObserver) -> None:
         self.observers.append(observer)
 
-    def notify(self) -> None:
+    def _notify(self) -> None:
         for observer in self.observers:
             observer.update(self)
 
@@ -57,19 +57,19 @@ class GuessingProcess:
                 print("Invalid word. Please select another one.\n")
 
         for index, letter in enumerate(list(word_input)):  # type: ignore
-            self.check_letter(letter, index)
+            self._check_letter(letter, index)
 
-        print(self.get_colored_word(word_input))  # type: ignore
+        print(self._get_colored_word(word_input))  # type: ignore
         self.number_of_guesses += 1
-        self.notify()
+        self._notify()
 
-    def check_letter(self, letter: str, index: int) -> None:
+    def _check_letter(self, letter: str, index: int) -> None:
         if letter in self.correct_word:
             self.correct_letters_guessed.add(letter)
         if self.correct_word[index] == letter:
             self.correct_indexes_guessed.add(index)
 
-    def get_colored_word(self, word: str) -> str:
+    def _get_colored_word(self, word: str) -> str:
         letters = list(word)
         built_up_string = ""
         for index, letter in enumerate(letters):
@@ -87,6 +87,3 @@ class GuessingProcess:
                     f"{bcolors.BRIGHT_BLACK}{upped_letter}{bcolors.ENDC}"
                 )
         return built_up_string
-
-    def trigger_game_over(self) -> None:
-        print("Game Over!")
