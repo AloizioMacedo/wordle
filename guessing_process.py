@@ -26,7 +26,6 @@ class GuessingProcess:
         self.max_guesses = game_type.get_max_guesses()
         self.number_of_guesses: int = 0
         self._observers: List[GuessingObserver] = []
-        print(str(self.correct_words))
 
     def attach(self, observer: GuessingObserver) -> None:
         self._observers.append(observer)
