@@ -93,7 +93,7 @@ class GuessingProcess:
     def __init__(self) -> None:
         self.correct_word = words[randint(0, len(words))]
         self.number_of_guesses: int = 0
-        self.correct_indexes_guessed: Set[int] = set()
+        self.word_was_guessed = False
         self._observers: List[GuessingObserver] = []
 
     def attach(self, observer: GuessingObserver) -> None:
@@ -114,8 +114,8 @@ class GuessingProcess:
             else:
                 print("Invalid word. Please select another one.\n")
 
-        for index, letter in enumerate(list(word_input)):  # type: ignore
-            self._check_letter(letter, index)
+        if self.correct_word == word_input:  # type: ignore
+            self.word_was_guessed = True
 
         word_painter = WordPainter(list(self.correct_word),
                                    list(word_input))  # type: ignore
@@ -123,7 +123,3 @@ class GuessingProcess:
 
         self.number_of_guesses += 1
         self._notify()
-
-    def _check_letter(self, letter: str, index: int) -> None:
-        if self.correct_word[index] == letter:
-            self.correct_indexes_guessed.add(index)

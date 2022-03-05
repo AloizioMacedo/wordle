@@ -12,10 +12,10 @@ class GameStatus(GuessingObserver):
 
     def update(self, guessing_process: GuessingProcess) -> None:
         if (guessing_process.number_of_guesses >= 5
-                and len(guessing_process.correct_indexes_guessed) < 5):
+                and not guessing_process.word_was_guessed):
             self.game_is_running = False
             self.game_won = False
-        elif len(guessing_process.correct_indexes_guessed) == 5:
+        elif guessing_process.word_was_guessed:
             self.game_is_running = False
             self.game_won = True
 
