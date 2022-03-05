@@ -18,7 +18,7 @@ class GameStatus(GuessingObserver):
         guessing_process.attach(self)
 
     def update(self, guessing_process: GuessingProcess) -> None:
-        if (guessing_process.number_of_guesses >= 5
+        if (guessing_process.number_of_guesses >= guessing_process.max_guesses
                 and not all(guessing_process.were_words_guessed)):
             self.game_is_running = False
             self.game_won = False
