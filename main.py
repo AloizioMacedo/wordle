@@ -7,6 +7,7 @@ class GameStatus(GuessingObserver):
 
     def __init__(self, guessing_process: GuessingProcess) -> None:
         self.game_is_running = True
+        self.guessing_process = guessing_process
         guessing_process.attach(self)
 
     def update(self, guessing_process: GuessingProcess) -> None:
@@ -22,7 +23,9 @@ class GameStatus(GuessingObserver):
         if self.game_won:
             print("Congratulations! You guessed the word!\n")
         else:
-            print("I'm sorry! You lost. : (\n")
+            print("I'm sorry! You lost. : (")
+            print("The correct answer was"
+                  f" {self.guessing_process.correct_word}.\n")
 
 
 def main():
