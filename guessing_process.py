@@ -117,31 +117,13 @@ class GuessingProcess:
         for index, letter in enumerate(list(word_input)):  # type: ignore
             self._check_letter(letter, index)
 
-        print(self._get_colored_word(word_input))  # type: ignore
+        word_painter = WordPainter(list(self.correct_word),
+                                   list(word_input))  # type: ignore
+        print(word_painter.get_painted_word())
+
         self.number_of_guesses += 1
         self._notify()
 
     def _check_letter(self, letter: str, index: int) -> None:
-        if letter in self.correct_word:
-            self.correct_letters_guessed.add(letter)
         if self.correct_word[index] == letter:
             self.correct_indexes_guessed.add(index)
-
-    def _get_colored_word(self, word: str) -> str:
-        letters = list(word)
-        built_up_string = ""
-        for index, letter in enumerate(letters):
-            upped_letter = letter.upper()
-            if self.correct_word[index] == letter:
-                built_up_string += (
-                    f"{bcolors.OKGREEN}{upped_letter}{bcolors.ENDC}"
-                    )
-            elif letter in self.correct_letters_guessed:
-                built_up_string += (
-                    f"{bcolors.WARNING}{upped_letter}{bcolors.ENDC}"
-                    )
-            else:
-                built_up_string += (
-                    f"{bcolors.BRIGHT_BLACK}{upped_letter}{bcolors.ENDC}"
-                )
-        return built_up_string
