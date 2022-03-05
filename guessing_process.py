@@ -3,7 +3,8 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import List
 
-from game_type import GameType, get_painted_words, is_input_valid
+from game_type import GameType, is_input_valid
+from word_painter import get_painted_words
 
 
 class GuessingObserver(ABC):
