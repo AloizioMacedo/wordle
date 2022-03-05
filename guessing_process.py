@@ -106,7 +106,7 @@ class GuessingProcess:
     def guess_step(self) -> None:
         word_is_valid = False
         while not word_is_valid:
-            word_input = input("Select the next attempt!\n")
+            word_input = input("Write your next attempt!\n")
             word_input = word_input.lower()
 
             if word_input in words:
