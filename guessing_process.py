@@ -94,14 +94,13 @@ class GuessingProcess:
         self.correct_word = words[randint(0, len(words))]
         self.number_of_guesses: int = 0
         self.correct_indexes_guessed: Set[int] = set()
-        self.correct_letters_guessed: Set[str] = set()
-        self.observers: List[GuessingObserver] = []
+        self._observers: List[GuessingObserver] = []
 
     def attach(self, observer: GuessingObserver) -> None:
-        self.observers.append(observer)
+        self._observers.append(observer)
 
     def _notify(self) -> None:
-        for observer in self.observers:
+        for observer in self._observers:
             observer.update(self)
 
     def guess_step(self) -> None:
