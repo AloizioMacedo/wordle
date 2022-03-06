@@ -14,7 +14,38 @@ class GuessingObserver(ABC):
         pass
 
 
-class GuessingProcess:
+class GuessingProcess(ABC):
+
+    @abstractmethod
+    def attach(self, observer: GuessingObserver) -> None:
+        pass
+
+    @abstractmethod
+    def _notify(self) -> None:
+        pass
+
+    @abstractmethod
+    def guess_step(self) -> None:
+        pass
+
+    @abstractmethod
+    def get_max_guesses(self) -> int:
+        pass
+
+    @abstractmethod
+    def get_were_words_guessed(self) -> List[bool]:
+        pass
+
+    @abstractmethod
+    def get_number_of_guesses(self) -> int:
+        pass
+
+    @abstractmethod
+    def get_correct_words(self) -> List[str]:
+        pass
+
+
+class GuessingProcessNoGui(GuessingProcess):
 
     def __init__(self, game_type: GameType) -> None:
         self.game_type = game_type
@@ -58,3 +89,15 @@ class GuessingProcess:
 
         self.number_of_guesses += 1
         self._notify()
+
+    def get_max_guesses(self) -> int:
+        return self.max_guesses
+
+    def get_were_words_guessed(self) -> List[bool]:
+        return self.were_words_guessed
+
+    def get_number_of_guesses(self) -> int:
+        return self.number_of_guesses
+
+    def get_correct_words(self) -> List[str]:
+        return self.correct_words
