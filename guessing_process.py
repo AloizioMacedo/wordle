@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from tkinter import END, Entry, Event, Tk
+from tkinter import END, Entry, Event, Label, Tk
 from typing import List
 
 from game_type import GameType, is_input_valid
@@ -118,6 +118,8 @@ class GuessingProcessGui(GuessingProcess):
         self._observers: List[GuessingObserver] = []
 
         self.root = root
+        self.end_print = Label(root, text="")
+        self.end_print.grid(row=game_type.get_max_guesses() + 1, column=0)
 
     def attach(self, observer: GuessingObserver) -> None:
         self._observers.append(observer)
@@ -131,7 +133,7 @@ class GuessingProcessGui(GuessingProcess):
         word_input = entry.get().lower()
 
         if is_input_valid(word_input):
-            print("Válido!")
+            self.end_print.config(text="")
             painted_words = get_painted_words(
                 word_input,  # type: ignore
                 self.correct_words,
@@ -147,6 +149,7 @@ class GuessingProcessGui(GuessingProcess):
             self._notify()
         else:
             print("Inválido!")
+            self.end_print.config(text="Invalid word.")
 
         entry.delete(0, END)
 
