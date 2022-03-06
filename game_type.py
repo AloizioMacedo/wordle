@@ -23,6 +23,10 @@ class GameType(ABC):
     def generate_correct_words(self) -> List[str]:
         pass
 
+    @abstractmethod
+    def get_number_of_words(self) -> int:
+        pass
+
 
 class Wordle(GameType):
 
@@ -34,6 +38,9 @@ class Wordle(GameType):
             WORDS[randint(0, len(WORDS))]
             ]
         return correct_words
+
+    def get_number_of_words(self) -> int:
+        return 1
 
 
 class Dordle(GameType):
@@ -48,6 +55,9 @@ class Dordle(GameType):
             ]
         return correct_words
 
+    def get_number_of_words(self) -> int:
+        return 2
+
 
 class Quordle(GameType):
 
@@ -60,3 +70,6 @@ class Quordle(GameType):
             for i in range(0, 4)
             ]
         return correct_words
+
+    def get_number_of_words(self) -> int:
+        return 4
