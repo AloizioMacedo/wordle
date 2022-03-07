@@ -63,7 +63,9 @@ class GameStatus(GuessingObserver):
         self.root.destroy()
 
     def retry(self) -> None:
-        self.root.destroy()
+        for widget in self.root.winfo_children():
+            widget.destroy()
+        self.root.quit()
 
 
 def selection_window():
@@ -99,18 +101,7 @@ def selection_window():
     root.mainloop()
 
 
-def main_game():
-    root = Tk()
-
-    def quit_playing():
-        global wanting_to_play
-        wanting_to_play = False
-        root.destroy()
-
-    root.protocol("WM_DELETE_WINDOW", quit_playing)
-    root.title("Wordle")
-    root.eval('tk::PlaceWindow . center')
-    root.geometry(GAME_TYPE.get_geometry())
+def main_game(root: Tk):
 
     words_frame = Frame(root)
     bottom_frame = Frame(root)
@@ -166,8 +157,20 @@ def set_up_game_gui(words_frame: Frame,
 
 def main():
     selection_window()
+    root = Tk()
+
+    def quit_playing():
+        global wanting_to_play
+        wanting_to_play = False
+        root.destroy()
+
+    root.protocol("WM_DELETE_WINDOW", quit_playing)
+    root.title("Wordle")
+    root.geometry(GAME_TYPE.get_geometry())
+    root.eval('tk::PlaceWindow . center')
+
     while wanting_to_play:
-        main_game()
+        main_game(root)
 
 
 if __name__ == "__main__":
