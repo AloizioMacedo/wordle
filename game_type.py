@@ -27,6 +27,10 @@ class GameType(ABC):
     def get_number_of_words(self) -> int:
         pass
 
+    @abstractmethod
+    def get_geometry(self) -> str:
+        pass
+
 
 class Wordle(GameType):
 
@@ -41,6 +45,9 @@ class Wordle(GameType):
 
     def get_number_of_words(self) -> int:
         return 1
+
+    def get_geometry(self) -> str:
+        return '250x400'
 
 
 class Dordle(GameType):
@@ -58,6 +65,9 @@ class Dordle(GameType):
     def get_number_of_words(self) -> int:
         return 2
 
+    def get_geometry(self) -> str:
+        return '300x400'
+
 
 class Quordle(GameType):
 
@@ -73,3 +83,6 @@ class Quordle(GameType):
 
     def get_number_of_words(self) -> int:
         return 4
+
+    def get_geometry(self) -> str:
+        return '600x400'

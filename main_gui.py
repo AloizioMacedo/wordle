@@ -66,6 +66,7 @@ class GameStatus(GuessingObserver):
 def selection_window():
     root = Tk()
     root.title("Wordle")
+    root.eval('tk::PlaceWindow . center')
 
     def select_wordle():
         global GAME_TYPE
@@ -105,6 +106,8 @@ def main_game():
 
     root.protocol("WM_DELETE_WINDOW", quit_playing)
     root.title("Wordle")
+    root.eval('tk::PlaceWindow . center')
+    root.geometry(GAME_TYPE.get_geometry())
 
     words_frame = Frame(root)
     bottom_frame = Frame(root)
