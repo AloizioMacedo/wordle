@@ -22,17 +22,17 @@ wanting_to_play = True
 class GameStatus(GuessingObserver):
 
     def __init__(self, guessing_process: GuessingProcess, root: Tk,
-                 end_print: Label, entry: Entry, bottom_frame: Frame) -> None:
+                 end_print: Label, entry: Entry) -> None:
         self.game_is_running = True
         self.guessing_process = guessing_process
         guessing_process.attach(self)
         self.root = root
         self.end_print = end_print
         self.entry = entry
-        self.bottom_frame = bottom_frame
-        self.retry_yes = Button(bottom_frame, text="Retry",
+        self.retry_frame = Frame(root)
+        self.retry_yes = Button(self.retry_frame, text="Retry",
                                 command=self.retry)
-        self.retry_no = Button(bottom_frame, text="Close",
+        self.retry_no = Button(self.retry_frame, text="Close",
                                command=self.destroy)
 
     def update(self, guessing_process: GuessingProcess) -> None:
@@ -41,16 +41,18 @@ class GameStatus(GuessingObserver):
                 and not all(guessing_process.get_were_words_guessed())):
             self.entry.config(state="disabled")
             self.end_print.config(text="I'm sorry! You lost. : (")
-            self.retry_yes.grid(row=GAME_TYPE.get_max_guesses()+1, column=1)
-            self.retry_no.grid(row=GAME_TYPE.get_max_guesses()+1, column=2)
+            self.retry_yes.grid(row=GAME_TYPE.get_max_guesses()+2, column=0)
+            self.retry_no.grid(row=GAME_TYPE.get_max_guesses()+2, column=1)
+            self.retry_frame.pack()
 
         elif all(guessing_process.get_were_words_guessed()):
             self.entry.config(state="disabled")
             self.end_print.config(
                 text="Congratulations! You guessed it right!\n"
                 )
-            self.retry_yes.grid(row=GAME_TYPE.get_max_guesses()+1, column=1)
-            self.retry_no.grid(row=GAME_TYPE.get_max_guesses()+1, column=2)
+            self.retry_yes.grid(row=GAME_TYPE.get_max_guesses()+2, column=0)
+            self.retry_no.grid(row=GAME_TYPE.get_max_guesses()+2, column=1)
+            self.retry_frame.pack()
 
     def destroy(self) -> None:
         global wanting_to_play
@@ -114,7 +116,7 @@ def main_game():
     end_print.grid(row=GAME_TYPE.get_max_guesses() + 1, column=0)
     guessing_process = GuessingProcessGui(GAME_TYPE, root, labels, end_print)
 
-    GameStatus(guessing_process, root, end_print, entry, bottom_frame)
+    GameStatus(guessing_process, root, end_print, entry)
     set_up_game_gui(words_frame, bottom_frame, labels,
                     entry, GAME_TYPE, guessing_process)
     root.mainloop()
