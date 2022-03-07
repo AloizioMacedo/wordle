@@ -40,7 +40,10 @@ class GameStatus(GuessingObserver):
                 >= guessing_process.get_max_guesses()
                 and not all(guessing_process.get_were_words_guessed())):
             self.entry.config(state="disabled")
-            self.end_print.config(text="I'm sorry! You lost. : (")
+            self.end_print.config(
+                text=("I'm sorry! You lost. : (\nThe correct answer was"
+                      f" {str(self.guessing_process.get_correct_words())}.\n")
+                )
             self.retry_yes.grid(row=GAME_TYPE.get_max_guesses()+2, column=0)
             self.retry_no.grid(row=GAME_TYPE.get_max_guesses()+2, column=1)
             self.retry_frame.pack()
