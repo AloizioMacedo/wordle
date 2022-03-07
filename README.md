@@ -6,5 +6,8 @@ Try it out here, then!
 
 ## How to play
 
-In order to play, you need to [download the repository files](https://github.com/AloizioMacedo/wordle/archive/refs/heads/master.zip) and run main.py. The game is then played
-in the terminal.
+In order to play, you need to [download the repository files](https://github.com/AloizioMacedo/wordle/archive/refs/heads/master.zip) and run wordle.exe, or
+run main_gui.py directly with python.
+
+You can also play it in the terminal by running main.py instead. Warning: There may be color issues when running the program from terminals with themes
+different from dark ones. (E.g., some light VSCode themes.)
