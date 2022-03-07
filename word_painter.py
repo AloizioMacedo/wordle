@@ -151,7 +151,7 @@ class _WordPainterGui(WordPainter):
 
     def paint_solved(self):
         for index in range(len(self.word_input)):
-            self._canvas[index].config(text="*", fg="green",
+            self._canvas[index].config(text="*", fg="#27c31d",
                                        font='Helvetica 18 bold')
 
     def _get_yellow_paint_available(self) -> Dict[str, int]:
@@ -175,7 +175,7 @@ class _WordPainterGui(WordPainter):
     def _paint_green(self) -> None:
         for index, letter in enumerate(self.word_input):
             if self.word_input[index] == self.correct_word[index]:
-                self._canvas[index].config(text=letter.upper(), fg="green",
+                self._canvas[index].config(text=letter.upper(), fg="#27c31d",
                                            font='Helvetica 18 bold')
                 self._yellow_paint_available[letter] -= 1
 
