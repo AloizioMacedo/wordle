@@ -1,7 +1,8 @@
 from __future__ import annotations
 
+from time import sleep
 from tkinter import Button, Entry, Label, Tk
-from turtle import onclick
+from typing import List
 
 from game_type import Dordle, GameType, Quordle, Wordle
 from guessing_process import (GuessingObserver, GuessingProcess,
@@ -15,31 +16,46 @@ GAME_TYPE_OPTIONS = {
 
 GAME_TYPE: GameType = None  # type: ignore
 
+wanting_to_play = True
+
 
 class GameStatus(GuessingObserver):
 
-    def __init__(self, guessing_process: GuessingProcess) -> None:
+    def __init__(self, guessing_process: GuessingProcess, root: Tk,
+                 end_print: Label, entry: Entry) -> None:
         self.game_is_running = True
         self.guessing_process = guessing_process
         guessing_process.attach(self)
+        self.root = root
+        self.end_print = end_print
+        self.entry = entry
+        self.retry_yes = Button(text="Retry", command=self.retry)
+        self.retry_no = Button(text="Close", command=self.destroy)
 
     def update(self, guessing_process: GuessingProcess) -> None:
         if (guessing_process.get_number_of_guesses()
                 >= guessing_process.get_max_guesses()
                 and not all(guessing_process.get_were_words_guessed())):
-            self.game_is_running = False
-            self.game_won = False
-        elif all(guessing_process.get_were_words_guessed()):
-            self.game_is_running = False
-            self.game_won = True
+            self.entry.config(state="disabled")
+            self.end_print.config(text="I'm sorry! You lost. : (")
+            self.retry_yes.grid(row=GAME_TYPE.get_max_guesses()+1, column=1)
+            self.retry_no.grid(row=GAME_TYPE.get_max_guesses()+1, column=2)
 
-    def trigger_end_game(self) -> None:
-        if self.game_won:
-            print("Congratulations! You guessed it right!\n")
-        else:
-            print("I'm sorry! You lost. : (")
-            print("The correct answer was"
-                  f" {str(self.guessing_process.get_correct_words())}.\n")
+        elif all(guessing_process.get_were_words_guessed()):
+            self.entry.config(state="disabled")
+            self.end_print.config(
+                text="Congratulations! You guessed it right!\n"
+                )
+            self.retry_yes.grid(row=GAME_TYPE.get_max_guesses()+1, column=1)
+            self.retry_no.grid(row=GAME_TYPE.get_max_guesses()+1, column=2)
+
+    def destroy(self) -> None:
+        global wanting_to_play
+        wanting_to_play = False
+        self.root.destroy()
+
+    def retry(self) -> None:
+        self.root.destroy()
 
 
 def selection_window():
@@ -76,28 +92,60 @@ def selection_window():
 
 def main_game():
     root = Tk()
+
+    def quit_playing():
+        global wanting_to_play
+        wanting_to_play = False
+        root.destroy()
+
+    root.protocol("WM_DELETE_WINDOW", quit_playing)
     root.title("Wordle")
-    guessing_process = GuessingProcessGui(GAME_TYPE, root)
-    game_status = GameStatus(guessing_process)
-    set_up_game_gui(root, GAME_TYPE, guessing_process)
-    root.mainloop()
-    game_status.trigger_end_game()
-
-
-def set_up_game_gui(root: Tk, game_type: GameType,
-                    guessing_process: GuessingProcessGui) -> None:
+    labels = generate_labels(root, GAME_TYPE)
+    end_print = Label(root, text="")
+    end_print.grid(row=GAME_TYPE.get_max_guesses() + 1, column=0)
+    guessing_process = GuessingProcessGui(GAME_TYPE, root, labels, end_print)
     entry = Entry(root)
+    GameStatus(guessing_process, root, end_print, entry)
+    set_up_game_gui(root, labels, entry, GAME_TYPE, guessing_process)
+    root.mainloop()
+
+
+def generate_labels(root: Tk, game_type: GameType) -> List[List[List[Label]]]:
+    labels: List[List[List[Label]]] = []
     for i in range(game_type.get_max_guesses()):
+        row_of_words: List[List[Label]] = []
+        labels.append(row_of_words)
         for j in range(game_type.get_number_of_words()):
-            label = Label(root, text="⬜⬜⬜⬜⬜")
-            label.grid(row=i, column=j)
+            word: List[Label] = []
+            row_of_words.append(word)
+            for k in range(5):
+                label = Label(root, text="⬜")
+                word.append(label)
+    return labels
+
+
+def set_up_game_gui(root: Tk,
+                    labels: List[List[List[Label]]],
+                    entry: Entry,
+                    game_type: GameType,
+                    guessing_process: GuessingProcessGui) -> None:
+    for i in range(game_type.get_max_guesses()):
+        row_of_words = labels[i]
+        for j in range(game_type.get_number_of_words()):
+            word = row_of_words[j]
+            for k in range(5):
+                label = word[k]
+                label.grid(row=i, column=6*j+k)
+            label = Label(root, text="  ")
+            label.grid(row=i, column=6*(j+1)-1)
     entry.grid(row=game_type.get_max_guesses(), column=0)
     entry.bind('<Return>', guessing_process.guess_step)
 
 
 def main():
     selection_window()
-    main_game()
+    while wanting_to_play:
+        main_game()
 
 
 if __name__ == "__main__":

@@ -5,7 +5,7 @@ from tkinter import END, Entry, Event, Label, Tk
 from typing import List
 
 from game_type import GameType, is_input_valid
-from word_painter import get_painted_words
+from word_painter import get_painted_words, put_painted_words_in_gui
 
 
 class GuessingObserver(ABC):
@@ -106,7 +106,9 @@ class GuessingProcessNoGui(GuessingProcess):
 
 class GuessingProcessGui(GuessingProcess):
 
-    def __init__(self, game_type: GameType, root: Tk) -> None:
+    def __init__(self, game_type: GameType, root: Tk,
+                 labels: List[List[List[Label]]],
+                 end_print: Label) -> None:
         self.game_type = game_type
 
         self.correct_words = game_type.generate_correct_words()
@@ -118,8 +120,8 @@ class GuessingProcessGui(GuessingProcess):
         self._observers: List[GuessingObserver] = []
 
         self.root = root
-        self.end_print = Label(root, text="")
-        self.end_print.grid(row=game_type.get_max_guesses() + 1, column=0)
+        self.labels = labels
+        self.end_print = end_print
 
     def attach(self, observer: GuessingObserver) -> None:
         self._observers.append(observer)
@@ -131,15 +133,14 @@ class GuessingProcessGui(GuessingProcess):
     def guess_step(self, event: Event) -> None:
         entry: Entry = event.widget
         word_input = entry.get().lower()
+        entry.delete(0, END)
 
         if is_input_valid(word_input):
             self.end_print.config(text="")
-            painted_words = get_painted_words(
-                word_input,  # type: ignore
-                self.correct_words,
-                self.were_words_guessed
-                )
-            print(painted_words)
+            put_painted_words_in_gui(word_input, self.correct_words,
+                                     self.were_words_guessed,
+                                     self.number_of_guesses,
+                                     self.labels[self.number_of_guesses])
 
             for index, word in enumerate(self.correct_words):
                 if word_input == word:  # type: ignore
@@ -148,10 +149,7 @@ class GuessingProcessGui(GuessingProcess):
             self.number_of_guesses += 1
             self._notify()
         else:
-            print("Inválido!")
             self.end_print.config(text="Invalid word.")
-
-        entry.delete(0, END)
 
     def get_max_guesses(self) -> int:
         return self.max_guesses
