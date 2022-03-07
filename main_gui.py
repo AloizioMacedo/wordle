@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from time import sleep
-from tkinter import Button, Entry, Label, Tk
+from tkinter import Button, Entry, Frame, Label, Tk
 from typing import List
 
 from game_type import Dordle, GameType, Quordle, Wordle
@@ -22,15 +22,18 @@ wanting_to_play = True
 class GameStatus(GuessingObserver):
 
     def __init__(self, guessing_process: GuessingProcess, root: Tk,
-                 end_print: Label, entry: Entry) -> None:
+                 end_print: Label, entry: Entry, bottom_frame: Frame) -> None:
         self.game_is_running = True
         self.guessing_process = guessing_process
         guessing_process.attach(self)
         self.root = root
         self.end_print = end_print
         self.entry = entry
-        self.retry_yes = Button(text="Retry", command=self.retry)
-        self.retry_no = Button(text="Close", command=self.destroy)
+        self.bottom_frame = bottom_frame
+        self.retry_yes = Button(bottom_frame, text="Retry",
+                                command=self.retry)
+        self.retry_no = Button(bottom_frame, text="Close",
+                               command=self.destroy)
 
     def update(self, guessing_process: GuessingProcess) -> None:
         if (guessing_process.get_number_of_guesses()
@@ -100,17 +103,25 @@ def main_game():
 
     root.protocol("WM_DELETE_WINDOW", quit_playing)
     root.title("Wordle")
-    labels = generate_labels(root, GAME_TYPE)
-    end_print = Label(root, text="")
+
+    words_frame = Frame(root)
+    bottom_frame = Frame(root)
+
+    labels = generate_labels(words_frame, GAME_TYPE)
+
+    entry = Entry(bottom_frame)
+    end_print = Label(bottom_frame, text="")
     end_print.grid(row=GAME_TYPE.get_max_guesses() + 1, column=0)
     guessing_process = GuessingProcessGui(GAME_TYPE, root, labels, end_print)
-    entry = Entry(root)
-    GameStatus(guessing_process, root, end_print, entry)
-    set_up_game_gui(root, labels, entry, GAME_TYPE, guessing_process)
+
+    GameStatus(guessing_process, root, end_print, entry, bottom_frame)
+    set_up_game_gui(words_frame, bottom_frame, labels,
+                    entry, GAME_TYPE, guessing_process)
     root.mainloop()
 
 
-def generate_labels(root: Tk, game_type: GameType) -> List[List[List[Label]]]:
+def generate_labels(words_frame: Frame,
+                    game_type: GameType) -> List[List[List[Label]]]:
     labels: List[List[List[Label]]] = []
     for i in range(game_type.get_max_guesses()):
         row_of_words: List[List[Label]] = []
@@ -119,12 +130,13 @@ def generate_labels(root: Tk, game_type: GameType) -> List[List[List[Label]]]:
             word: List[Label] = []
             row_of_words.append(word)
             for k in range(5):
-                label = Label(root, text="⬜")
+                label = Label(words_frame, text="⬜")
                 word.append(label)
     return labels
 
 
-def set_up_game_gui(root: Tk,
+def set_up_game_gui(words_frame: Frame,
+                    bottom_frame: Frame,
                     labels: List[List[List[Label]]],
                     entry: Entry,
                     game_type: GameType,
@@ -136,10 +148,12 @@ def set_up_game_gui(root: Tk,
             for k in range(5):
                 label = word[k]
                 label.grid(row=i, column=6*j+k)
-            label = Label(root, text="  ")
+            label = Label(words_frame, text="  ")
             label.grid(row=i, column=6*(j+1)-1)
     entry.grid(row=game_type.get_max_guesses(), column=0)
     entry.bind('<Return>', guessing_process.guess_step)
+    words_frame.pack()
+    bottom_frame.pack()
 
 
 def main():
